@@ -40,10 +40,7 @@ class DashboardScreen extends StatelessWidget {
         ),
         title: const Text(
           'Dashboard',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -114,10 +111,7 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: _buildStatCard(
-                      label: 'Active Classes',
-                      value: '15',
-                    ),
+                    child: _buildStatCard(label: 'Active Classes', value: '15'),
                   ),
                 ],
               ),
@@ -143,7 +137,7 @@ class DashboardScreen extends StatelessWidget {
           border: Border.all(color: Colors.grey.shade300, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 5,
               offset: const Offset(0, 3),
@@ -157,10 +151,7 @@ class DashboardScreen extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
             ),
           ],
         ),

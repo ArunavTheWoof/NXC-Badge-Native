@@ -35,10 +35,7 @@ class IssueDocumentScreen extends StatelessWidget {
             // User ID Field
             const Text(
               'User ID',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 8),
             TextField(
@@ -62,10 +59,7 @@ class IssueDocumentScreen extends StatelessWidget {
             // Document Title Field
             const Text(
               'Document Title',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 8),
             TextField(
@@ -123,7 +117,7 @@ class IssueDocumentScreen extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey.shade200,
@@ -154,7 +148,10 @@ class IssueDocumentScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
-                child: const Text('Issue Document', style: TextStyle(fontSize: 16)),
+                child: const Text(
+                  'Issue Document',
+                  style: TextStyle(fontSize: 16),
+                ),
               ),
             ),
           ],
