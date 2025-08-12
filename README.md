@@ -83,7 +83,7 @@ bash
 Copy
 Edit
 # Clone the repository
-git clone https://github.com/yourusername/nxc-badge.git
+git clone https://github.com/nikith-bv/NXC-Badge-Native
 
 # Navigate into the project
 cd nxc-badge

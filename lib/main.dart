@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/Admin/class.dart';
+import 'package:test_app1/Admin/dashboard.dart';
 // import 'package:test_app1/Admin/dashboard.dart';
 import 'package:test_app1/Admin/issue_documents.dart';
 
@@ -116,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const IssueDocumentScreen(),
+                    builder: (context) => const ClassesScreen(),
                   ),
                 );
               },

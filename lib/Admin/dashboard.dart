@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'assign_roles.dart'; 
+import 'issue_documents.dart';
+import 'create_class.dart';
 
 void main() {
   runApp(const MyApp());
@@ -70,21 +73,30 @@ class DashboardScreen extends StatelessWidget {
                     icon: Icons.add_business,
                     label: 'Create Class',
                     onTap: () {
-                      // TODO: Implement Create Class functionality
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CreateNewClassScreen()),
+                      );
                     },
                   ),
                   _buildActionButton(
                     icon: Icons.group,
                     label: 'Assign Roles',
                     onTap: () {
-                      // TODO: Implement Assign Roles functionality
+                     Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AssignRolesScreen()),
+                      );
                     },
                   ),
                   _buildActionButton(
                     icon: Icons.description,
                     label: 'Issue Documents',
                     onTap: () {
-                      // TODO: Implement Issue Documents functionality
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const IssueDocumentScreen()),
+                      );
                     },
                   ),
                 ],
