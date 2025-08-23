@@ -6,7 +6,6 @@ class StudentDashboard extends StatelessWidget {
   final VoidCallback? onViewMissedClasses;
   final VoidCallback? onViewAttendancePredictor;
   final VoidCallback? onViewDocuments;
-  final VoidCallback? onHome;
 
   const StudentDashboard({
     super.key,
@@ -15,7 +14,6 @@ class StudentDashboard extends StatelessWidget {
     this.onViewMissedClasses,
     this.onViewAttendancePredictor,
     this.onViewDocuments,
-    this.onHome,
   });
 
   @override
@@ -133,41 +131,7 @@ class StudentDashboard extends StatelessWidget {
               ),
             ),
 
-            // Bottom navigation
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: onHome,
-                        icon: const Icon(
-                          Icons.home,
-                          color: Colors.black,
-                          size: 24,
-                        ),
-                      ),
-                      const Text(
-                        'Home',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            
           ],
         ),
       ),

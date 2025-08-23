@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/nfc_scan.dart';
 
 class ClassesGatekeeperScreen extends StatelessWidget {
   final VoidCallback? onAddClass;
-  final VoidCallback? onStartAttendance;
   final VoidCallback? onHome;
   final VoidCallback? onLogs;
   final VoidCallback? onProfile;
@@ -10,7 +10,6 @@ class ClassesGatekeeperScreen extends StatelessWidget {
   const ClassesGatekeeperScreen({
     super.key,
     this.onAddClass,
-    this.onStartAttendance,
     this.onHome,
     this.onLogs,
     this.onProfile,
@@ -67,33 +66,9 @@ class ClassesGatekeeperScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     // Class Card
-                    _buildClassCard(),
+                    _buildClassCard(context),
                   ],
                 ),
-              ),
-            ),
-
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: BoxDecoration(
-                color: Colors.grey[100], // Light gray background
-                border: const Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(Icons.home, 'Home', false, onHome),
-                  _buildBottomNavItem(Icons.list, 'Logs', true, onLogs),
-                  _buildBottomNavItem(
-                    Icons.person,
-                    'Profile',
-                    false,
-                    onProfile,
-                  ),
-                ],
               ),
             ),
           ],
@@ -102,7 +77,7 @@ class ClassesGatekeeperScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildClassCard() {
+  Widget _buildClassCard(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -154,7 +129,12 @@ class ClassesGatekeeperScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: onStartAttendance,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NfcScanScreen()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(
                         0xFF4A8CD2,
@@ -184,183 +164,7 @@ class ClassesGatekeeperScreen extends StatelessWidget {
   }
 
   Widget _buildClassroomImage() {
-    return Container(
-      height: 200,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F5DC), // Light beige background
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(12.0),
-          topRight: Radius.circular(12.0),
-        ),
-      ),
-      child: Stack(
-        children: [
-          // Walls (light beige background)
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: const Color(0xFFF5F5DC),
-          ),
-
-          // Whiteboard
-          Positioned(
-            top: 20,
-            left: 20,
-            right: 20,
-            height: 80,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(
-                  color: const Color(0xFFD2B48C), // Light wooden frame
-                  width: 2,
-                ),
-              ),
-            ),
-          ),
-
-          // Plant on the left
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: Container(
-              width: 40,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Stack(
-                children: [
-                  // Plant pot
-                  Positioned(
-                    bottom: 0,
-                    left: 5,
-                    right: 5,
-                    height: 20,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                  // Plant leaves
-                  Positioned(
-                    top: 5,
-                    left: 10,
-                    right: 10,
-                    height: 40,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.green[600],
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Clock on the right
-          Positioned(
-            top: 30,
-            right: 30,
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.black, width: 2),
-              ),
-              child: Stack(
-                children: [
-                  // Clock hands
-                  Center(
-                    child: Container(width: 2, height: 8, color: Colors.black),
-                  ),
-                  Center(
-                    child: Container(width: 1, height: 12, color: Colors.black),
-                  ),
-                  // Clock center dot
-                  Center(
-                    child: Container(
-                      width: 3,
-                      height: 3,
-                      decoration: const BoxDecoration(
-                        color: Colors.black,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Pendant light fixture
-          Positioned(
-            top: 10,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                width: 20,
-                height: 15,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.lightbulb_outline,
-                    color: Colors.grey,
-                    size: 12,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Desks and chairs (simplified representation)
-          Positioned(
-            bottom: 20,
-            left: 20,
-            right: 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(3, (index) => _buildDeskChair()),
-            ),
-          ),
-
-          // Sunlight shadow effect
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.transparent,
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.1),
-                  ],
-                  stops: const [0.0, 0.7, 1.0],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return Image.asset('lib/assets/classes.png');
   }
 
   Widget _buildDeskChair() {
@@ -386,45 +190,6 @@ class ClassesGatekeeperScreen extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildBottomNavItem(
-    IconData icon,
-    String label,
-    bool isActive,
-    VoidCallback? onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color:
-                isActive
-                    ? const Color(0xFF8B4513)
-                    : const Color(
-                      0xFF87CEEB,
-                    ), // Reddish-brown for active, light blue-gray for inactive
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color:
-                  isActive
-                      ? const Color(0xFF8B4513)
-                      : const Color(
-                        0xFF87CEEB,
-                      ), // Reddish-brown for active, light blue-gray for inactive
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/Student/document_viewer.dart';
 
 class StudentDocumentsScreen extends StatelessWidget {
   final VoidCallback? onBack;
@@ -110,33 +111,7 @@ class StudentDocumentsScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey[600],
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        currentIndex: 0, // Assuming Home is default, adjust as needed
-        onTap: (index) {
-          if (index == 0) onHome?.call();
-          if (index == 1) onWallet?.call();
-          if (index == 2) onSettings?.call();
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            label: 'Wallet',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
-          ),
-        ],
-      ),
+      
     );
   }
 
@@ -182,7 +157,14 @@ class StudentDocumentsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: onView,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DocumentViewerScreen(),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[100],
                     foregroundColor: Colors.black,

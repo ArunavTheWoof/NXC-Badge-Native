@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:test_app1/Admin/class.dart';
+import 'package:test_app1/Admin/bottom_nav_bar.dart';
+import 'package:test_app1/Gatekeeper/bottom_nav_bar_gatekeeper.dart';
+import 'package:test_app1/Gatekeeper/classes_gatekeeper.dart';
+import 'package:test_app1/Gatekeeper/gatekeeper_dashboard.dart';
+import 'package:test_app1/Librarian/issue_book.dart';
+import 'package:test_app1/Librarian/librarian_dashboard.dart';
 import 'package:test_app1/Admin/dashboard.dart';
-// import 'package:test_app1/Admin/dashboard.dart';
-import 'package:test_app1/Admin/issue_documents.dart';
+import 'package:test_app1/Onboarding/choose_role_screen.dart';
+import 'package:test_app1/Organiser/bottom_nav_bar_organiser.dart';
+import 'package:test_app1/Organiser/organiser_dashboard.dart';
+import 'package:test_app1/Student/bottom_nav_bar_student.dart';
+import 'package:test_app1/Student/student_dashboard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +29,7 @@ class MyApp extends StatelessWidget {
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
         // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
+        // try changing the seedColor in the colorScheme` below to Colors.green
         // and then invoke "hot reload" (save your changes or press the "hot
         // reload" button in a Flutter-supported IDE, or press "r" if you used
         // the command line to start the app).
@@ -118,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ClassesScreen(),
+                    builder: (context) => const ChooseRoleScreen(),
                   ),
                 );
               },

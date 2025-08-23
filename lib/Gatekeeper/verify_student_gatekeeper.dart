@@ -1,21 +1,8 @@
 import 'package:flutter/material.dart';
 
 class VerifyStudentGatekeeperScreen extends StatelessWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onDownloadStudentId;
-  final VoidCallback? onDownloadEnrollment;
-  final VoidCallback? onHome;
-  final VoidCallback? onLogs;
-  final VoidCallback? onProfile;
-
   const VerifyStudentGatekeeperScreen({
     super.key,
-    this.onBack,
-    this.onDownloadStudentId,
-    this.onDownloadEnrollment,
-    this.onHome,
-    this.onLogs,
-    this.onProfile,
   });
 
   @override
@@ -38,7 +25,7 @@ class VerifyStudentGatekeeperScreen extends StatelessWidget {
                 children: [
                   // Back arrow
                   IconButton(
-                    onPressed: onBack,
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.black,
@@ -80,25 +67,6 @@ class VerifyStudentGatekeeperScreen extends StatelessWidget {
                     _buildDocumentsIssuedSection(),
                   ],
                 ),
-              ),
-            ),
-
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(Icons.home, 'Home', false, onHome),
-                  _buildBottomNavItem(Icons.list, 'Logs', true, onLogs),
-                  _buildBottomNavItem(Icons.person, 'Profile', false, onProfile),
-                ],
               ),
             ),
           ],
@@ -299,7 +267,7 @@ class VerifyStudentGatekeeperScreen extends StatelessWidget {
         _buildDocumentItem(
           'Student ID Card',
           'Issued on 2023-10-15',
-          onDownloadStudentId,
+          () {},
         ),
         const SizedBox(height: 16),
 
@@ -307,13 +275,13 @@ class VerifyStudentGatekeeperScreen extends StatelessWidget {
         _buildDocumentItem(
           'Enrollment Certificate',
           'Issued on 2023-10-15',
-          onDownloadEnrollment,
+          () {},
         ),
       ],
     );
   }
 
-  Widget _buildDocumentItem(String title, String issueDate, VoidCallback? onDownload) {
+  Widget _buildDocumentItem(String title, String issueDate, VoidCallback onDownload) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -363,30 +331,6 @@ class VerifyStudentGatekeeperScreen extends StatelessWidget {
                 color: Colors.black,
                 size: 20,
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavItem(IconData icon, String label, bool isActive, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? const Color(0xFF8B4513) : const Color(0xFF87CEEB), // Reddish-brown for active, light blue-gray for inactive
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? const Color(0xFF8B4513) : const Color(0xFF87CEEB), // Reddish-brown for active, light blue-gray for inactive
-              fontSize: 12,
             ),
           ),
         ],

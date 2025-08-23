@@ -4,18 +4,12 @@ class ProfileScreen extends StatefulWidget {
   final VoidCallback? onBack;
   final VoidCallback? onChangePicture;
   final VoidCallback? onLogout;
-  final VoidCallback? onHome;
-  final VoidCallback? onWallet;
-  final VoidCallback? onSettings;
 
   const ProfileScreen({
     super.key,
     this.onBack,
     this.onChangePicture,
     this.onLogout,
-    this.onHome,
-    this.onWallet,
-    this.onSettings,
   });
 
   @override
@@ -66,14 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Row(
                 children: [
                   // Back arrow
-                  IconButton(
-                    onPressed: widget.onBack,
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                      size: 24,
-                    ),
-                  ),
+                  const BackButton(),
                   const Expanded(
                     child: Text(
                       'Profile',
@@ -114,39 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(
-                    Icons.home_outlined,
-                    'Home',
-                    false,
-                    widget.onHome,
-                  ),
-                  _buildBottomNavItem(
-                    Icons.account_balance_wallet_outlined,
-                    'Wallet',
-                    false,
-                    widget.onWallet,
-                  ),
-                  _buildBottomNavItem(
-                    Icons.settings,
-                    'Settings',
-                    false,
-                    widget.onSettings,
-                  ),
-                ],
-              ),
-            ),
+            
           ],
         ),
       ),
@@ -294,32 +249,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildBottomNavItem(
-    IconData icon,
-    String label,
-    bool isActive,
-    VoidCallback? onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? Colors.black : Colors.grey[600],
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? Colors.black : Colors.grey[600],
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  
 }

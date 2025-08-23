@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/Librarian/bottom_nav_bar_librarian.dart';
 import 'dart:math' as math;
+import 'package:test_app1/nfc_scan.dart';
+import 'package:test_app1/Librarian/issued_books.dart';
 
 class LibrarianDashboard extends StatefulWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onScanQr;
-  final VoidCallback? onScanNfc;
-  final VoidCallback? onExportLedger;
-
   const LibrarianDashboard({
     super.key,
-    this.onBack,
-    this.onScanQr,
-    this.onScanNfc,
-    this.onExportLedger,
   });
 
   @override
@@ -96,7 +90,7 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: widget.onBack,
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.black,
@@ -124,9 +118,9 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
                 children: [
-                  _buildTab('Issue Book', true),
+                  _buildTab('Issue Book', _selectedTab == 'Issue Book'),
                   const SizedBox(width: 32),
-                  _buildTab('Return Book', false),
+                  _buildTab('Return Book', _selectedTab == 'Return Book'),
                 ],
               ),
             ),
@@ -137,91 +131,142 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Scan Zone Section
-                    const Text(
-                      'Scan Zone',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Scan QR Option
-                    _buildScanOption(
-                      icon: Icons.qr_code_scanner,
-                      title: 'Scan QR',
-                      onTap: widget.onScanQr ?? () {},
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Scan NFC Option
-                    _buildScanOption(
-                      icon: Icons.nfc,
-                      title: 'Scan NFC',
-                      onTap: _startNfcScan,
-                      isNfc: true,
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Today's Issued Books Section
-                    const Text(
-                      "Today's Issued Books",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Book List
-                    _buildBookItem(
-                      'The Great Gatsby',
-                      'Issued: 1',
-                      _buildBookCover1(),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildBookItem(
-                      'To Kill a Mockingbird',
-                      'Issued: 1',
-                      _buildBookCover2(),
-                    ),
-                  ],
-                ),
+                child: _selectedTab == 'Issue Book'
+                    ? _buildIssueBookContent(context)
+                    : _buildReturnBookContent(),
               ),
             ),
 
-            // Export Ledger Button
+            // Buttons
             Container(
               padding: const EdgeInsets.all(20.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: widget.onExportLedger,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF20B2AA), // Teal color
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const BottomNavBarLibrarian(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF20B2AA), // Teal color
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'View Issued Books',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    elevation: 0,
                   ),
-                  child: const Text(
-                    'Export Ledger',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF20B2AA), // Teal color
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Export Ledger',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildIssueBookContent(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Scan Zone Section
+        const Text(
+          'Scan Zone',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Scan QR Option
+        _buildScanOption(
+          icon: Icons.qr_code_scanner,
+          title: 'Scan QR',
+          onTap: () {},
+        ),
+        const SizedBox(height: 12),
+
+        // Scan NFC Option
+        _buildScanOption(
+          icon: Icons.nfc,
+          title: 'Scan NFC',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NfcScanScreen()),
+            );
+          },
+          isNfc: true,
+        ),
+
+        const SizedBox(height: 32),
+
+        // Today's Issued Books Section
+        const Text(
+          "Today's Issued Books",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Book List
+        _buildBookItem(
+          'The Great Gatsby',
+          'Issued: 1',
+          _buildBookCover1(),
+        ),
+        const SizedBox(height: 12),
+        _buildBookItem(
+          'To Kill a Mockingbird',
+          'Issued: 1',
+          _buildBookCover2(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildReturnBookContent() {
+    return const Center(
+      child: Text(
+        'Return Book Content',
+        style: TextStyle(fontSize: 18),
       ),
     );
   }
@@ -246,9 +291,8 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
           const SizedBox(height: 8),
           if (isSelected)
             Container(
-              width: double.infinity,
               height: 2,
-              color: const Color(0xFFE0E0E0),
+              color: Colors.black,
             ),
         ],
       ),

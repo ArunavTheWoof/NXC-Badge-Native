@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/Admin/bottom_nav_bar.dart';
+import 'package:test_app1/Gatekeeper/bottom_nav_bar_gatekeeper.dart';
+import 'package:test_app1/Librarian/librarian_dashboard.dart';
+import 'package:test_app1/Organiser/bottom_nav_bar_organiser.dart';
+import 'package:test_app1/Organiser/organiser_dashboard.dart';
+import 'package:test_app1/Student/bottom_nav_bar_student.dart';
 
 class ChooseRoleScreen extends StatelessWidget {
   final VoidCallback? onBack;
@@ -63,6 +69,7 @@ class ChooseRoleScreen extends StatelessWidget {
                   children: [
                     // Student
                     _buildRoleCard(
+                      context,
                       'Student',
                       'lib/assets/student_role.png',
                       const Color(0xFFF5F5DC), // Light beige
@@ -70,6 +77,7 @@ class ChooseRoleScreen extends StatelessWidget {
                     ),
                     // Admin
                     _buildRoleCard(
+                      context,
                       'Admin',
                       'lib/assets/admin_role.png',
                       const Color(0xFFE8F5E8), // Light sage green
@@ -77,6 +85,7 @@ class ChooseRoleScreen extends StatelessWidget {
                     ),
                     // Organizer
                     _buildRoleCard(
+                      context,
                       'Organizer',
                       'lib/assets/organizer_role.png',
                       const Color(0xFFF5F5DC), // Light beige
@@ -84,6 +93,7 @@ class ChooseRoleScreen extends StatelessWidget {
                     ),
                     // Librarian
                     _buildRoleCard(
+                      context,
                       'Librarian',
                       'lib/assets/librarian_role.png',
                       const Color(0xFFF5F5DC), // Light beige
@@ -91,6 +101,7 @@ class ChooseRoleScreen extends StatelessWidget {
                     ),
                     // Gatekeeper
                     _buildRoleCard(
+                      context,
                       'Gatekeeper',
                       'lib/assets/gatekeeper_role.png',
                       const Color(0xFFE8F0E8), // Dark green/brown
@@ -165,9 +176,43 @@ class ChooseRoleScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRoleCard(String roleName, String assetPath, Color backgroundColor, {bool isSelected = false}) {
+  Widget _buildRoleCard(BuildContext context, String roleName, String assetPath, Color backgroundColor, {bool isSelected = false}) {
     return GestureDetector(
-      onTap: () => onRoleSelected?.call(roleName),
+      onTap: () {
+        if (roleName == 'Admin') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        } 
+        else if(roleName == "Librarian"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LibrarianDashboard()),
+          );
+        }
+        else if(roleName == "Student"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const StudentBottomNavbar()),
+          );
+        }
+        else if(roleName == "Organizer"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const OrganiserMainScreen()),
+          );
+        }
+        else if(roleName == "Gatekeeper"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const GatekeeperMainScreen()),
+          );
+        }
+        else {
+          onRoleSelected?.call(roleName);
+        }
+      },
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,

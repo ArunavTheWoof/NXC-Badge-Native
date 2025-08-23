@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'assign_roles.dart'; 
+import 'assign_roles.dart';
 import 'issue_documents.dart';
 import 'create_class.dart';
+import 'add_student.dart';
 
 void main() {
   runApp(const MyApp());
@@ -66,7 +67,10 @@ class DashboardScreen extends StatelessWidget {
                     icon: Icons.add,
                     label: 'Add Student',
                     onTap: () {
-                      // TODO: Implement Add Student functionality
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AddStudentScreen()),
+                      );
                     },
                   ),
                   _buildActionButton(

@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/Librarian/librarian_dashboard.dart';
 
 class IssueBook extends StatefulWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onCancel;
-  final Function(String bookName, DateTime issueDate, int expiryDays)? onSave;
-
   const IssueBook({
     super.key,
-    this.onBack,
-    this.onCancel,
-    this.onSave,
   });
 
   @override
@@ -61,8 +55,6 @@ class _IssueBookState extends State<IssueBook> {
       final bookName = _bookNameController.text.trim();
       final expiryDays = int.tryParse(_expiryDaysController.text.trim()) ?? 0;
       
-      widget.onSave?.call(bookName, _selectedDate!, expiryDays);
-      
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -72,8 +64,11 @@ class _IssueBookState extends State<IssueBook> {
         ),
       );
       
-      // Navigate back
-      widget.onBack?.call();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LibrarianDashboard()),
+        (Route<dynamic> route) => false,
+      );
     } else if (_selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -100,7 +95,13 @@ class _IssueBookState extends State<IssueBook> {
                 child: Row(
                   children: [
                     IconButton(
-                      onPressed: widget.onBack,
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LibrarianDashboard()),
+                          (Route<dynamic> route) => false,
+                        );
+                      },
                       icon: const Icon(
                         Icons.arrow_back,
                         color: Colors.black,
@@ -296,7 +297,13 @@ class _IssueBookState extends State<IssueBook> {
                     // Cancel Button
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: widget.onCancel ?? widget.onBack,
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LibrarianDashboard()),
+                            (Route<dynamic> route) => false,
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFF5F5F5),
                           foregroundColor: Colors.black,
