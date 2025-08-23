@@ -129,8 +129,7 @@ class _ClassesScreenState extends State<ClassesScreen> {
                 itemBuilder: (context, index) {
                   final classItem = _filteredClasses[index];
                   return _buildClassListItem(
-                    name: classItem.name,
-                    studentCount: classItem.studentCount,
+                    classData: classItem,
                   );
                 },
               ),
@@ -150,7 +149,7 @@ class _ClassesScreenState extends State<ClassesScreen> {
   }
 
   // Widget for each item in the class list
-  Widget _buildClassListItem({required String name, required int studentCount}) {
+  Widget _buildClassListItem({required _ClassData classData}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Row(
@@ -161,7 +160,7 @@ class _ClassesScreenState extends State<ClassesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                name,
+                classData.name,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -169,7 +168,7 @@ class _ClassesScreenState extends State<ClassesScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                '$studentCount students',
+                '${classData.studentCount} students',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey.shade600,
@@ -187,9 +186,9 @@ class _ClassesScreenState extends State<ClassesScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => StudentListScreen(
+                      builder: (context) => ViewStudentsScreen(
                         // Pass the class name, although it's not used in this specific UI
-                        className: name,
+                        className: classData.name,
                       ),
                     ),
                   );
@@ -204,18 +203,38 @@ class _ClassesScreenState extends State<ClassesScreen> {
                     MaterialPageRoute(
                       builder: (context) => ClassDetailsScreen(
                         // Pass the class name to the details screen
-                        className: name,
+                        className: classData.name,
                       ),
                     ),
                   );
                 },
               ),
               const SizedBox(width: 4),
-              IconButton(
-                icon: const Icon(Icons.more_horiz, color: Colors.grey),
-                onPressed: () {
-                  // TODO: Implement more options logic
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert, color: Colors.grey),
+                onSelected: (String result) {
+                  if (result == 'remove_class') {
+                    setState(() {
+                      _allClasses.remove(classData);
+                      _filterClasses(); // Re-filter to update the displayed list
+                    });
+                  }
+                  // TODO: Implement other options if needed
                 },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'export_attendance',
+                    child: Text('Export attendance'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'assign_teacher',
+                    child: Text('Assign teacher'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'remove_class',
+                    child: Text('Remove class'),
+                  ),
+                ],
               ),
             ],
           ),

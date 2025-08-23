@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/profile.dart';
+import 'package:test_app1/support.dart';
 
 class SettingsScreen extends StatelessWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onProfile;
   final VoidCallback? onNotifications;
   final VoidCallback? onScanMethod;
   final VoidCallback? onTheme;
   final VoidCallback? onAbout;
   final VoidCallback? onHelp;
   final VoidCallback? onLogout;
-  final VoidCallback? onHome;
-  final VoidCallback? onWallet;
-  final VoidCallback? onSettings;
 
   const SettingsScreen({
     super.key,
-    this.onBack,
-    this.onProfile,
     this.onNotifications,
     this.onScanMethod,
     this.onTheme,
     this.onAbout,
     this.onHelp,
     this.onLogout,
-    this.onHome,
-    this.onWallet,
-    this.onSettings,
   });
 
   @override
@@ -47,14 +39,7 @@ class SettingsScreen extends StatelessWidget {
               child: Row(
                 children: [
                   // Back arrow
-                  IconButton(
-                    onPressed: onBack,
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                      size: 24,
-                    ),
-                  ),
+                  const BackButton(),
                   const Expanded(
                     child: Text(
                       'Settings',
@@ -88,7 +73,7 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildProfileItem(),
+                    _buildProfileItem(context),
                     const SizedBox(height: 32),
 
                     // Preferences Section
@@ -117,29 +102,17 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     _buildNavigationItem('About', onAbout),
-                    _buildNavigationItem('Help', onHelp),
+                    _buildNavigationItem('Help', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SupportScreen(),
+                        ),
+                      );
+                    }),
                     _buildNavigationItem('Logout', onLogout),
                   ],
                 ),
-              ),
-            ),
-
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(Icons.home_outlined, 'Home', false, onHome),
-                  _buildBottomNavItem(Icons.account_balance_wallet_outlined, 'Wallet', false, onWallet),
-                  _buildBottomNavItem(Icons.settings, 'Settings', true, onSettings),
-                ],
               ),
             ),
           ],
@@ -148,9 +121,16 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileItem() {
+  Widget _buildProfileItem(BuildContext context) {
     return GestureDetector(
-      onTap: onProfile,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProfileScreen(),
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Row(
@@ -279,30 +259,6 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavItem(IconData icon, String label, bool isActive, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? Colors.black : Colors.grey[600],
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? Colors.black : Colors.grey[600],
-              fontSize: 12,
-            ),
-          ),
-        ],
       ),
     );
   }

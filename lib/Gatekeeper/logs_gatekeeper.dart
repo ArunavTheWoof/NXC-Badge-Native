@@ -93,24 +93,7 @@ class _LogsGatekeeperScreenState extends State<LogsGatekeeperScreen> {
               ),
             ),
 
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(Icons.home, 'Home', false, widget.onHome),
-                  _buildBottomNavItem(Icons.list, 'Logs', true, widget.onLogs),
-                  _buildBottomNavItem(Icons.person, 'Profile', false, widget.onProfile),
-                ],
-              ),
-            ),
+            
           ],
         ),
       ),
@@ -422,29 +405,7 @@ class _LogsGatekeeperScreenState extends State<LogsGatekeeperScreen> {
     );
   }
 
-  Widget _buildBottomNavItem(IconData icon, String label, bool isActive, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? const Color(0xFF2E5BBA) : Colors.grey[600], // Dark blue for active
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? const Color(0xFF2E5BBA) : Colors.grey[600], // Dark blue for active
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  
 
   String _getMonthName(int month) {
     const months = [

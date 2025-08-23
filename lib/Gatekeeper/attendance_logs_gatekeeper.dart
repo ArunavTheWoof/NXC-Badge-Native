@@ -1,23 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AttendanceLogsGatekeeperScreen extends StatelessWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onDateRangeTap;
-  final VoidCallback? onClassEventTap;
-  final VoidCallback? onExport;
-  final VoidCallback? onHome;
-  final VoidCallback? onLogs;
-  final VoidCallback? onProfile;
-
   const AttendanceLogsGatekeeperScreen({
     super.key,
-    this.onBack,
-    this.onDateRangeTap,
-    this.onClassEventTap,
-    this.onExport,
-    this.onHome,
-    this.onLogs,
-    this.onProfile,
   });
 
   @override
@@ -43,7 +28,7 @@ class AttendanceLogsGatekeeperScreen extends StatelessWidget {
                 children: [
                   // Back arrow
                   IconButton(
-                    onPressed: onBack,
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.black,
@@ -99,30 +84,6 @@ class AttendanceLogsGatekeeperScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(Icons.home, 'Home', false, onHome),
-                  _buildBottomNavItem(Icons.list, 'Logs', true, onLogs),
-                  _buildBottomNavItem(
-                    Icons.person,
-                    'Profile',
-                    false,
-                    onProfile,
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -143,7 +104,7 @@ class AttendanceLogsGatekeeperScreen extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: onDateRangeTap,
+          onTap: () {},
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(
@@ -200,7 +161,7 @@ class AttendanceLogsGatekeeperScreen extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: onClassEventTap,
+          onTap: () {},
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(
@@ -340,7 +301,7 @@ class AttendanceLogsGatekeeperScreen extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: onExport,
+        onPressed: () {},
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF4285F4), // Blue background
           foregroundColor: Colors.white,
@@ -354,43 +315,6 @@ class AttendanceLogsGatekeeperScreen extends StatelessWidget {
           'Export to CSV',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavItem(
-    IconData icon,
-    String label,
-    bool isActive,
-    VoidCallback? onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color:
-                isActive
-                    ? const Color(0xFF8B4513)
-                    : Colors
-                        .grey[600], // Darker gray/brown for active, gray for inactive
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color:
-                  isActive
-                      ? const Color(0xFF8B4513)
-                      : Colors
-                          .grey[600], // Darker gray/brown for active, gray for inactive
-              fontSize: 12,
-            ),
-          ),
-        ],
       ),
     );
   }

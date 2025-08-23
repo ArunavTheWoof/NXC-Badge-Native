@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:test_app1/Librarian/issue_book.dart';
 
 class NfcScanScreen extends StatefulWidget {
-  final VoidCallback? onClose;
-  final VoidCallback? onHome;
-  final VoidCallback? onLogs;
-  final VoidCallback? onProfile;
-
   const NfcScanScreen({
     super.key,
-    this.onClose,
-    this.onHome,
-    this.onLogs,
-    this.onProfile,
   });
 
   @override
@@ -71,7 +63,7 @@ class _NfcScanScreenState extends State<NfcScanScreen>
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: widget.onClose,
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(
                       Icons.close,
                       color: Colors.black,
@@ -127,22 +119,31 @@ class _NfcScanScreenState extends State<NfcScanScreen>
               ),
             ),
 
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
+            // Verify Button
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const IssueBook()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
                 ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(Icons.home, 'Home', false, widget.onHome),
-                  _buildBottomNavItem(Icons.list, 'Logs', false, widget.onLogs),
-                  _buildBottomNavItem(Icons.person, 'Profile', false, widget.onProfile),
-                ],
+                child: const Text(
+                  'Verify',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ],
@@ -176,30 +177,6 @@ class _NfcScanScreenState extends State<NfcScanScreen>
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavItem(IconData icon, String label, bool isActive, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: Colors.grey[600], // All items in gray
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[600], // All items in gray
-              fontSize: 12,
             ),
           ),
         ],

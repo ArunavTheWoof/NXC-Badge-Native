@@ -1,26 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ExportDataLibrarian extends StatefulWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onHome;
-  final VoidCallback? onLogs;
-  final VoidCallback? onProfile;
-  final Function(Map<String, dynamic> exportData)? onExport;
-
-  const ExportDataLibrarian({
-    super.key,
-    this.onBack,
-    this.onHome,
-    this.onLogs,
-    this.onProfile,
-    this.onExport,
-  });
+class ExportDataLibrarianScreen extends StatefulWidget {
+  const ExportDataLibrarianScreen({super.key});
 
   @override
-  State<ExportDataLibrarian> createState() => _ExportDataLibrarianState();
+  State<ExportDataLibrarianScreen> createState() => _ExportDataLibrarianScreenState();
 }
 
-class _ExportDataLibrarianState extends State<ExportDataLibrarian> {
+class _ExportDataLibrarianScreenState extends State<ExportDataLibrarianScreen> {
   String? _selectedMonth;
   DateTime? _startDate;
   DateTime? _endDate;
@@ -118,9 +105,6 @@ class _ExportDataLibrarianState extends State<ExportDataLibrarian> {
       'exportFormat': _exportFormat,
     };
 
-    // Call the callback
-    widget.onExport?.call(exportData);
-
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -143,14 +127,6 @@ class _ExportDataLibrarianState extends State<ExportDataLibrarian> {
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
               child: Row(
                 children: [
-                  IconButton(
-                    onPressed: widget.onBack,
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                      size: 24,
-                    ),
-                  ),
                   const Expanded(
                     child: Text(
                       'Export Library Data',
@@ -162,7 +138,6 @@ class _ExportDataLibrarianState extends State<ExportDataLibrarian> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(width: 48), // Balance the header
                 ],
               ),
             ),
@@ -473,51 +448,8 @@ class _ExportDataLibrarianState extends State<ExportDataLibrarian> {
                 ),
               ),
             ),
-
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(Icons.home, 'Home', false, widget.onHome),
-                  _buildBottomNavItem(Icons.list, 'Logs', false, widget.onLogs),
-                  _buildBottomNavItem(Icons.person, 'Profile', false, widget.onProfile),
-                ],
-              ),
-            ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavItem(IconData icon, String label, bool isActive, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: const Color(0xFF9E9E9E), // Dark gray
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF9E9E9E), // Dark gray
-              fontSize: 12,
-            ),
-          ),
-        ],
       ),
     );
   }

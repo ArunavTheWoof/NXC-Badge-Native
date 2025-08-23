@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SupportScreen extends StatefulWidget {
-  final VoidCallback? onBack;
+  
   final VoidCallback? onFaqItem;
   final VoidCallback? onSubmit;
   final VoidCallback? onChatbot;
@@ -9,13 +9,9 @@ class SupportScreen extends StatefulWidget {
   final VoidCallback? onCallUs;
   final VoidCallback? onPrivacyPolicy;
   final VoidCallback? onTermsOfService;
-  final VoidCallback? onHome;
-  final VoidCallback? onWallet;
-  final VoidCallback? onSettings;
 
   const SupportScreen({
     super.key,
-    this.onBack,
     this.onFaqItem,
     this.onSubmit,
     this.onChatbot,
@@ -23,9 +19,6 @@ class SupportScreen extends StatefulWidget {
     this.onCallUs,
     this.onPrivacyPolicy,
     this.onTermsOfService,
-    this.onHome,
-    this.onWallet,
-    this.onSettings,
   });
 
   @override
@@ -68,7 +61,9 @@ class _SupportScreenState extends State<SupportScreen> {
                 children: [
                   // Back arrow
                   IconButton(
-                    onPressed: widget.onBack,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                     icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.black,
@@ -120,39 +115,7 @@ class _SupportScreenState extends State<SupportScreen> {
               ),
             ),
 
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(
-                    Icons.home_outlined,
-                    'Home',
-                    true,
-                    widget.onHome,
-                  ),
-                  _buildBottomNavItem(
-                    Icons.account_balance_wallet_outlined,
-                    'Wallet',
-                    false,
-                    widget.onWallet,
-                  ),
-                  _buildBottomNavItem(
-                    Icons.settings,
-                    'Settings',
-                    false,
-                    widget.onSettings,
-                  ),
-                ],
-              ),
-            ),
+            
           ],
         ),
       ),
@@ -442,32 +405,5 @@ class _SupportScreenState extends State<SupportScreen> {
     );
   }
 
-  Widget _buildBottomNavItem(
-    IconData icon,
-    String label,
-    bool isActive,
-    VoidCallback? onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? Colors.blue : Colors.grey[600],
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? Colors.blue : Colors.grey[600],
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  
 }

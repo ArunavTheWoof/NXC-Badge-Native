@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DocumentViewerScreen extends StatelessWidget {
-  final VoidCallback? onClose;
-  final VoidCallback? onPrev;
-  final VoidCallback? onNext;
-
   const DocumentViewerScreen({
     super.key,
-    this.onClose,
-    this.onPrev,
-    this.onNext,
   });
 
   @override
@@ -33,15 +26,8 @@ class DocumentViewerScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // Close button (X)
-                  IconButton(
-                    onPressed: onClose,
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.black,
-                      size: 24,
-                    ),
-                  ),
+                  // Back button
+                  const BackButton(),
                   const Expanded(
                     child: Text(
                       'Document Viewer',
@@ -53,7 +39,32 @@ class DocumentViewerScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(width: 48), // Balance the close button
+                  // Search button
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Implement search functionality
+                    },
+                    icon: const Icon(
+                      Icons.search,
+                      color: Colors.black,
+                      size: 24,
+                    ),
+                    // TODO: Replace with your own image icon
+                    // icon: Image.asset('lib/assets/search_icon.png'),
+                  ),
+                  // View button
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Implement view functionality
+                    },
+                    icon: const Icon(
+                      Icons.visibility,
+                      color: Colors.black,
+                      size: 24,
+                    ),
+                    // TODO: Replace with your own image icon
+                    // icon: Image.asset('lib/assets/view_icon.png'),
+                  ),
                 ],
               ),
             ),
@@ -165,61 +176,6 @@ class DocumentViewerScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-            ),
-
-            // Navigation buttons
-            Container(
-              padding: const EdgeInsets.all(20.0),
-              color: Colors.white,
-              child: Row(
-                children: [
-                  // Prev button
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: onPrev,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF5F5F5), // Light gray
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'Prev',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Next button
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: onNext,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF5F5F5), // Light gray
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'Next',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
           ],

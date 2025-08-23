@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/Gatekeeper/classes_gatekeeper.dart';
 
 class GatekeeperDashboardScreen extends StatelessWidget {
   final VoidCallback? onSettings;
@@ -80,7 +81,7 @@ class GatekeeperDashboardScreen extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Action Buttons
-                    _buildActionButtons(),
+                    _buildActionButtons(context),
                     const SizedBox(height: 32),
 
                     // Classes List Section
@@ -91,30 +92,6 @@ class GatekeeperDashboardScreen extends StatelessWidget {
                     _buildActivityLogSection(),
                   ],
                 ),
-              ),
-            ),
-
-            // Bottom Navigation Bar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Color(0xFFE0E0E0), width: 1),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildBottomNavItem(Icons.home, 'Home', true, onHome),
-                  _buildBottomNavItem(Icons.list, 'Logs', false, onLogs),
-                  _buildBottomNavItem(
-                    Icons.person,
-                    'Profile',
-                    false,
-                    onProfile,
-                  ),
-                ],
               ),
             ),
           ],
@@ -193,10 +170,16 @@ class GatekeeperDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(BuildContext context) {
     return Column(
       children: [
-        _buildActionCard(Icons.menu, 'View Classes', onViewClasses),
+        _buildActionCard(Icons.menu, 'View Classes', () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ClassesGatekeeperScreen()),
+          );
+        }),
         const SizedBox(height: 12),
         _buildActionCard(Icons.file_upload, 'Export Data', onExportData),
       ],
@@ -352,35 +335,6 @@ class GatekeeperDashboardScreen extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavItem(
-    IconData icon,
-    String label,
-    bool isActive,
-    VoidCallback? onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? Colors.black : Colors.grey[600],
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? Colors.black : Colors.grey[600],
-              fontSize: 12,
             ),
           ),
         ],
