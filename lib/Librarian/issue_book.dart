@@ -52,8 +52,9 @@ class _IssueBookState extends State<IssueBook> {
 
   void _saveBook() {
     if (_formKey.currentState!.validate() && _selectedDate != null) {
-      final bookName = _bookNameController.text.trim();
-      final expiryDays = int.tryParse(_expiryDaysController.text.trim()) ?? 0;
+      // TODO: Implement actual book issuing functionality
+      // final bookName = _bookNameController.text.trim();
+      // final expiryDays = int.tryParse(_expiryDaysController.text.trim()) ?? 0;
       
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(

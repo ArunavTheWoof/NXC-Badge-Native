@@ -86,7 +86,7 @@ class ClassesGatekeeperScreen extends StatelessWidget {
         border: Border.all(color: Colors.grey[300]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -165,31 +165,5 @@ class ClassesGatekeeperScreen extends StatelessWidget {
 
   Widget _buildClassroomImage() {
     return Image.asset('lib/assets/classes.png');
-  }
-
-  Widget _buildDeskChair() {
-    return Column(
-      children: [
-        // Chair
-        Container(
-          width: 25,
-          height: 20,
-          decoration: BoxDecoration(
-            color: const Color(0xFFD2B48C), // Light wood color
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-        ),
-        const SizedBox(height: 2),
-        // Desk
-        Container(
-          width: 30,
-          height: 15,
-          decoration: BoxDecoration(
-            color: const Color(0xFFD2B48C), // Light wood color
-            borderRadius: BorderRadius.circular(4.0),
-          ),
-        ),
-      ],
-    );
   }
 }

@@ -5,8 +5,40 @@ import 'package:test_app1/Organiser/create_event_organizer.dart';
 class OrganiserDashboard extends StatelessWidget {
   const OrganiserDashboard({super.key});
 
+  void buyCredits(BuildContext context) {
+    // Implement buy credits functionality
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Buy Credits'),
+          content: const Text('Buy credits feature will be implemented here.\n\nThis would integrate with a payment system like Stripe or PayPal.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Credits purchase will be implemented'),
+                    backgroundColor: Colors.blue,
+                  ),
+                );
+              },
+              child: const Text('Buy Now'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -33,7 +65,7 @@ class OrganiserDashboard extends StatelessWidget {
             const SizedBox(height: 16),
             _buildSectionHeader('Credits'),
             const SizedBox(height: 12),
-            _buildCreditsBalance(),
+            _buildCreditsBalance(context),
             const SizedBox(height: 24),
             _buildSectionHeader('Upcoming Events'),
             const SizedBox(height: 12),
@@ -84,7 +116,7 @@ class OrganiserDashboard extends StatelessWidget {
   }
 
   // Widget for the credits balance and buy button
-  Widget _buildCreditsBalance() {
+  Widget _buildCreditsBalance(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -101,7 +133,7 @@ class OrganiserDashboard extends StatelessWidget {
             const SizedBox(width: 16),
             ElevatedButton(
               onPressed: () {
-                // TODO: Implement buy credits functionality
+                buyCredits(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF5A99D4),

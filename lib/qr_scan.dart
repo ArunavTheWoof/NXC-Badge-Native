@@ -30,7 +30,7 @@ class _QrScanScreenState extends State<QrScanScreen>
 
   bool _isContinuousScanEnabled = false;
   bool _isScanning = false;
-  List<String> _scannedData = [];
+  final List<String> _scannedData = [];
 
   @override
   void initState() {
@@ -219,7 +219,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                 height: 100,
                 margin: const EdgeInsets.symmetric(horizontal: 20.0),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Column(
@@ -267,7 +267,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                 color: Colors.black,
                 border: Border(
                   top: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -301,7 +301,7 @@ class _QrScanScreenState extends State<QrScanScreen>
           height: 250,
           decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.blue.withOpacity(
+              color: Colors.blue.withValues(alpha: 
                 0.3 + _lightingAnimation.value * 0.4,
               ),
               width: 2,
@@ -316,7 +316,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                   borderRadius: BorderRadius.circular(20),
                   gradient: RadialGradient(
                     colors: [
-                      Colors.blue.withOpacity(
+                      Colors.blue.withValues(alpha: 
                         0.1 + _lightingAnimation.value * 0.2,
                       ),
                       Colors.transparent,
@@ -358,7 +358,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                 child: Icon(
                   Icons.qr_code_scanner,
                   size: 80,
-                  color: Colors.blue.withOpacity(
+                  color: Colors.blue.withValues(alpha: 
                     0.5 + _lightingAnimation.value * 0.3,
                   ),
                 ),
@@ -385,13 +385,13 @@ class _QrScanScreenState extends State<QrScanScreen>
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: Colors.blue.withOpacity(
+                    color: Colors.blue.withValues(alpha: 
                       0.8 + _cornerAnimation.value * 0.2,
                     ),
                     width: 3,
                   ),
                   left: BorderSide(
-                    color: Colors.blue.withOpacity(
+                    color: Colors.blue.withValues(alpha: 
                       0.8 + _cornerAnimation.value * 0.2,
                     ),
                     width: 3,
@@ -416,13 +416,13 @@ class _QrScanScreenState extends State<QrScanScreen>
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: Colors.blue.withOpacity(
+                    color: Colors.blue.withValues(alpha: 
                       0.8 + _cornerAnimation.value * 0.2,
                     ),
                     width: 3,
                   ),
                   right: BorderSide(
-                    color: Colors.blue.withOpacity(
+                    color: Colors.blue.withValues(alpha: 
                       0.8 + _cornerAnimation.value * 0.2,
                     ),
                     width: 3,
@@ -447,13 +447,13 @@ class _QrScanScreenState extends State<QrScanScreen>
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: Colors.blue.withOpacity(
+                    color: Colors.blue.withValues(alpha: 
                       0.8 + _cornerAnimation.value * 0.2,
                     ),
                     width: 3,
                   ),
                   left: BorderSide(
-                    color: Colors.blue.withOpacity(
+                    color: Colors.blue.withValues(alpha: 
                       0.8 + _cornerAnimation.value * 0.2,
                     ),
                     width: 3,
@@ -478,13 +478,13 @@ class _QrScanScreenState extends State<QrScanScreen>
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: Colors.blue.withOpacity(
+                    color: Colors.blue.withValues(alpha: 
                       0.8 + _cornerAnimation.value * 0.2,
                     ),
                     width: 3,
                   ),
                   right: BorderSide(
-                    color: Colors.blue.withOpacity(
+                    color: Colors.blue.withValues(alpha: 
                       0.8 + _cornerAnimation.value * 0.2,
                     ),
                     width: 3,
@@ -502,7 +502,7 @@ class _QrScanScreenState extends State<QrScanScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
@@ -555,8 +555,8 @@ class _QrScanScreenState extends State<QrScanScreen>
       decoration: BoxDecoration(
         color:
             _isScanning
-                ? Colors.green.withOpacity(0.2)
-                : Colors.grey.withOpacity(0.2),
+                ? Colors.green.withValues(alpha: 0.2)
+                : Colors.grey.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(

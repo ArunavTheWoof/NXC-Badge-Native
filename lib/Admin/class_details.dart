@@ -45,6 +45,24 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
     super.dispose();
   }
 
+  void _navigateToAssignTeacher() {
+    // Navigate to assign teacher screen
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Assign Teacher feature will be implemented here'),
+        backgroundColor: Colors.blue,
+      ),
+    );
+    
+    // In a real implementation, you would navigate to an assign teacher screen:
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => AssignTeacherScreen(className: widget.className),
+    //   ),
+    // );
+  }
+
   void _filterSubjects() {
     final query = _searchController.text.toLowerCase();
     setState(() {
@@ -174,7 +192,7 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
           if (subject.teacherName == null)
             TextButton(
               onPressed: () {
-                // TODO: Navigate to an "Assign Teacher" screen
+                _navigateToAssignTeacher();
               },
               style: TextButton.styleFrom(
                 backgroundColor: Colors.grey.shade200,

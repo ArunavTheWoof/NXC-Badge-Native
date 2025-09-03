@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:test_app1/Admin/bottom_nav_bar.dart';
-import 'package:test_app1/Gatekeeper/bottom_nav_bar_gatekeeper.dart';
-import 'package:test_app1/Gatekeeper/classes_gatekeeper.dart';
-import 'package:test_app1/Gatekeeper/gatekeeper_dashboard.dart';
-import 'package:test_app1/Librarian/issue_book.dart';
-import 'package:test_app1/Librarian/librarian_dashboard.dart';
-import 'package:test_app1/Admin/dashboard.dart';
+import 'package:test_app1/services/firebase_service.dart';
+import 'package:test_app1/config/dev_config.dart';
 import 'package:test_app1/Onboarding/choose_role_screen.dart';
-import 'package:test_app1/Organiser/bottom_nav_bar_organiser.dart';
-import 'package:test_app1/Organiser/organiser_dashboard.dart';
-import 'package:test_app1/Student/bottom_nav_bar_student.dart';
-import 'package:test_app1/Student/student_dashboard.dart';
+import 'package:test_app1/examples/firebase_auth_example.dart';
 
-void main() {
+void main() async {
+  // Ensure that Flutter is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase (with development mode support)
+  await FirebaseService.initializeFirebase();
+  
   runApp(const MyApp());
 }
 
@@ -116,6 +114,26 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Development mode indicator
+            if (DevConfig.isDevelopmentMode)
+              Container(
+                padding: const EdgeInsets.all(8),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.orange[100],
+                  border: Border.all(color: Colors.orange),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  DevConfig.statusMessage,
+                  style: const TextStyle(
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
@@ -131,6 +149,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: const Text('Go to Dashboard'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FirebaseAuthExample(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Firebase Auth Example'),
             ),
           ],
         ),

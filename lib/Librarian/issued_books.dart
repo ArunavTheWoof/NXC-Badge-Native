@@ -14,14 +14,14 @@ class IssuedBooksScreen extends StatelessWidget {
   // Mock data for the list of issued books.
   // In a real app, you would pass this data into the widget.
   final List<IssuedBook> issuedBooksData = const [
-    const IssuedBook(name: 'Ethan Carter', date: '2023-08-15', bookTitle: 'The Great Gatsby'),
-    const IssuedBook(name: 'Olivia Bennett', date: '2023-07-22', bookTitle: 'To Kill a Mockingbird'),
-    const IssuedBook(name: 'Noah Thompson', date: '2023-06-10', bookTitle: '1984'),
-    const IssuedBook(name: 'Ava Martinez', date: '2023-05-05', bookTitle: 'Pride and Prejudice'),
-    const IssuedBook(name: 'Liam Harris', date: '2023-04-18', bookTitle: 'The Catcher in the Rye'),
-    const IssuedBook(name: 'Sophia Clark', date: '2023-03-25', bookTitle: 'The Hobbit'),
-    const IssuedBook(name: 'Jackson Lewis', date: '2023-02-12', bookTitle: 'The Lord of the Rings'),
-    const IssuedBook(name: 'Isabella Walker', date: '2023-01-08', bookTitle: 'The Da Vinci Code'),
+    IssuedBook(name: 'Ethan Carter', date: '2023-08-15', bookTitle: 'The Great Gatsby'),
+    IssuedBook(name: 'Olivia Bennett', date: '2023-07-22', bookTitle: 'To Kill a Mockingbird'),
+    IssuedBook(name: 'Noah Thompson', date: '2023-06-10', bookTitle: '1984'),
+    IssuedBook(name: 'Ava Martinez', date: '2023-05-05', bookTitle: 'Pride and Prejudice'),
+    IssuedBook(name: 'Liam Harris', date: '2023-04-18', bookTitle: 'The Catcher in the Rye'),
+    IssuedBook(name: 'Sophia Clark', date: '2023-03-25', bookTitle: 'The Hobbit'),
+    IssuedBook(name: 'Jackson Lewis', date: '2023-02-12', bookTitle: 'The Lord of the Rings'),
+    IssuedBook(name: 'Isabella Walker', date: '2023-01-08', bookTitle: 'The Da Vinci Code'),
   ];
 
   const IssuedBooksScreen({super.key});
@@ -114,7 +114,7 @@ class IssuedBooksScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // TODO: Implement return functionality
-                print('Return button for $name tapped');
+                // Book return logic will be handled by FirebaseService
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFF5F5DC), // Light beige/brown

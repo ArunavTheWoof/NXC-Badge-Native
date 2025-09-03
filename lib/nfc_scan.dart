@@ -153,7 +153,7 @@ class _NfcScanScreenState extends State<NfcScanScreen>
   }
 
   Widget _buildNfcAnimation() {
-    return Container(
+    return SizedBox(
       width: 200,
       height: 200,
       child: Stack(

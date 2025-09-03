@@ -17,16 +17,16 @@ class ViewStudentsScreen extends StatelessWidget {
 
   // Dummy data for the student list
   final List<Student> students = const [
-    const Student(name: 'Sophia Clark', email: 'sophia.clark@example.com', imageUrl: 'https://i.pravatar.cc/150?img=1'),
-    const Student(name: 'Liam Evans', email: 'liam.evans@example.com', imageUrl: 'https://i.pravatar.cc/150?img=2'),
-    const Student(name: 'Olivia Green', email: 'olivia.green@example.com', imageUrl: 'https://i.pravatar.cc/150?img=3'),
-    const Student(name: 'Noah Harris', email: 'noah.harris@example.com', imageUrl: 'https://i.pravatar.cc/150?img=4'),
-    const Student(name: 'Ava Jackson', email: 'ava.jackson@example.com', imageUrl: 'https://i.pravatar.cc/150?img=5'),
-    const Student(name: 'Ethan King', email: 'ethan.king@example.com', imageUrl: 'https://i.pravatar.cc/150?img=6'),
-    const Student(name: 'Isabella Lee', email: 'isabella.lee@example.com', imageUrl: 'https://i.pravatar.cc/150?img=7'),
-    const Student(name: 'Mason Lopez', email: 'mason.lopez@example.com', imageUrl: 'https://i.pravatar.cc/150?img=8'),
-    const Student(name: 'Mia Martinez', email: 'mia.martinez@example.com', imageUrl: 'https://i.pravatar.cc/150?img=9'),
-    const Student(name: 'Logan Nelson', email: 'logan.nelson@example.com', imageUrl: 'https://i.pravatar.cc/150?img=10'),
+    Student(name: 'Sophia Clark', email: 'sophia.clark@example.com', imageUrl: 'https://i.pravatar.cc/150?img=1'),
+    Student(name: 'Liam Evans', email: 'liam.evans@example.com', imageUrl: 'https://i.pravatar.cc/150?img=2'),
+    Student(name: 'Olivia Green', email: 'olivia.green@example.com', imageUrl: 'https://i.pravatar.cc/150?img=3'),
+    Student(name: 'Noah Harris', email: 'noah.harris@example.com', imageUrl: 'https://i.pravatar.cc/150?img=4'),
+    Student(name: 'Ava Jackson', email: 'ava.jackson@example.com', imageUrl: 'https://i.pravatar.cc/150?img=5'),
+    Student(name: 'Ethan King', email: 'ethan.king@example.com', imageUrl: 'https://i.pravatar.cc/150?img=6'),
+    Student(name: 'Isabella Lee', email: 'isabella.lee@example.com', imageUrl: 'https://i.pravatar.cc/150?img=7'),
+    Student(name: 'Mason Lopez', email: 'mason.lopez@example.com', imageUrl: 'https://i.pravatar.cc/150?img=8'),
+    Student(name: 'Mia Martinez', email: 'mia.martinez@example.com', imageUrl: 'https://i.pravatar.cc/150?img=9'),
+    Student(name: 'Logan Nelson', email: 'logan.nelson@example.com', imageUrl: 'https://i.pravatar.cc/150?img=10'),
   ];
 
   void _showToast() {

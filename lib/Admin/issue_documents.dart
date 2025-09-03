@@ -1,7 +1,109 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
-class IssueDocumentScreen extends StatelessWidget {
+class IssueDocumentScreen extends StatefulWidget {
   const IssueDocumentScreen({super.key});
+
+  @override
+  State<IssueDocumentScreen> createState() => _IssueDocumentScreenState();
+}
+
+class _IssueDocumentScreenState extends State<IssueDocumentScreen> {
+  File? _selectedFile;
+  final ImagePicker _picker = ImagePicker();
+  final TextEditingController _userIdController = TextEditingController();
+  final TextEditingController _documentTitleController = TextEditingController();
+
+  @override
+  void dispose() {
+    _userIdController.dispose();
+    _documentTitleController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickFile() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+      
+      if (image != null) {
+        setState(() {
+          _selectedFile = File(image.path);
+        });
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('File selected successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error picking file. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _issueDocument() async {
+    if (_userIdController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter User ID'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (_documentTitleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter Document Title'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (_selectedFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a document file'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    // In a real implementation, you would:
+    // 1. Upload the file to Firebase Storage using StorageService
+    // 2. Create a document record in Firestore using FirestoreService
+    // 3. Send notification to the student
+    
+    // Simulate processing
+    await Future.delayed(const Duration(seconds: 1));
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Document issued successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +115,6 @@ class IssueDocumentScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            // This will take the user to the previous screen
             Navigator.of(context).pop();
           },
         ),
@@ -39,6 +140,7 @@ class IssueDocumentScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             TextField(
+              controller: _userIdController,
               decoration: InputDecoration(
                 hintText: 'Search User ID',
                 hintStyle: TextStyle(color: Colors.grey.shade500),
@@ -63,6 +165,7 @@ class IssueDocumentScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             TextField(
+              controller: _documentTitleController,
               decoration: InputDecoration(
                 hintText: 'Enter Document Name',
                 hintStyle: TextStyle(color: Colors.grey.shade500),
@@ -84,23 +187,37 @@ class IssueDocumentScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: TextButton(
-                onPressed: () {
-                  // TODO: Implement file picking logic
-                },
+                onPressed: _pickFile,
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Colors.grey.shade100,
+                  backgroundColor: _selectedFile != null 
+                      ? Colors.green.shade100 
+                      : Colors.grey.shade100,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                 ),
-                child: const Text(
-                  'Choose File',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _selectedFile != null ? Icons.check_circle : Icons.attach_file,
+                      color: _selectedFile != null ? Colors.green : Colors.grey,
+                      size: 24,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _selectedFile != null 
+                          ? 'File Selected: ${_selectedFile!.path.split('/').last}'
+                          : 'Choose File',
+                      style: TextStyle(
+                        color: _selectedFile != null ? Colors.green : Colors.black87,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -135,11 +252,8 @@ class IssueDocumentScreen extends StatelessWidget {
             // Issue Document Button
             Expanded(
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Implement issue document logic
-                },
+                onPressed: _issueDocument,
                 style: ElevatedButton.styleFrom(
-                  // Exact blue color from the image
                   backgroundColor: const Color(0xFF3B82F6),
                   foregroundColor: Colors.white,
                   elevation: 0,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:test_app1/Librarian/bottom_nav_bar_librarian.dart';
 import 'dart:math' as math;
 import 'package:test_app1/nfc_scan.dart';
-import 'package:test_app1/Librarian/issued_books.dart';
 
 class LibrarianDashboard extends StatefulWidget {
   const LibrarianDashboard({
@@ -19,7 +18,7 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
   late Animation<double> _nfcWaveAnimation;
   late Animation<double> _nfcPulseAnimation;
 
-  bool _isNfcScanning = false;
+  final bool _isNfcScanning = false;
   String _selectedTab = 'Issue Book';
 
   @override
@@ -44,34 +43,6 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
   void dispose() {
     _nfcAnimationController.dispose();
     super.dispose();
-  }
-
-  void _startNfcScan() {
-    setState(() {
-      _isNfcScanning = true;
-    });
-    _nfcAnimationController.repeat(reverse: true);
-
-    // Simulate NFC scanning
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _isNfcScanning = false;
-        });
-        _nfcAnimationController.stop();
-        _showScanSuccess();
-      }
-    });
-  }
-
-  void _showScanSuccess() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('NFC scanned successfully!'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 1),
-      ),
-    );
   }
 
   @override

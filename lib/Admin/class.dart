@@ -140,10 +140,10 @@ class _ClassesScreenState extends State<ClassesScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToCreateClass,
         backgroundColor: const Color(0xFF3B82F6), // Matching blue color
-        child: const Icon(Icons.add, color: Colors.white, size: 28),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
+        child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
     );
   }

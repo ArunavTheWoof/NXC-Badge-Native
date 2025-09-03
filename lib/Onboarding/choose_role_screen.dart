@@ -3,7 +3,6 @@ import 'package:test_app1/Admin/bottom_nav_bar.dart';
 import 'package:test_app1/Gatekeeper/bottom_nav_bar_gatekeeper.dart';
 import 'package:test_app1/Librarian/librarian_dashboard.dart';
 import 'package:test_app1/Organiser/bottom_nav_bar_organiser.dart';
-import 'package:test_app1/Organiser/organiser_dashboard.dart';
 import 'package:test_app1/Student/bottom_nav_bar_student.dart';
 
 class ChooseRoleScreen extends StatelessWidget {
