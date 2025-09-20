@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_app1/services/auth_service.dart';
+import 'package:test_app1/services/role_router.dart';
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -31,9 +33,35 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleLogin() {
-    if (_formKey.currentState!.validate()) {
-      widget.onLogin?.call(_emailController.text, _passwordController.text);
+    if (!_formKey.currentState!.validate()) return;
+
+    // If external handler is provided, delegate to it to preserve existing wiring
+    if (widget.onLogin != null) {
+      widget.onLogin!.call(_emailController.text, _passwordController.text);
+      return;
     }
+
+    // Embedded Firebase Auth flow
+    () async {
+      try {
+        await AuthService.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+        await AuthService.updateLastLogin();
+
+        final data = await AuthService.getUserData();
+        final role = (data != null ? (data['role'] as String? ?? 'student') : 'student');
+
+        if (!mounted) return;
+        RoleRouter.goToRoleHome(context, role);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ${e is Exception ? e.toString() : e}')),
+        );
+      }
+    }();
   }
 
   @override

@@ -3,6 +3,11 @@ import 'package:test_app1/services/firebase_service.dart';
 import 'package:test_app1/config/dev_config.dart';
 import 'package:test_app1/Onboarding/choose_role_screen.dart';
 import 'package:test_app1/examples/firebase_auth_example.dart';
+import 'package:test_app1/widgets/authentication_wrapper.dart';
+import 'package:test_app1/Onboarding/login.dart' as onboarding;
+import 'package:test_app1/Onboarding/sign_up.dart' as onboarding;
+import 'package:test_app1/services/auth_service.dart';
+import 'package:test_app1/services/role_router.dart';
 
 void main() async {
   // Ensure that Flutter is initialized
@@ -40,7 +45,10 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: AuthenticationWrapper(
+        signedInBuilder: (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
+        signedOutBuilder: (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
+      ),
     );
   }
 }
@@ -139,6 +147,15 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const SizedBox(height: 16),
+            // Inline Auth Panel (non-invasive): shows quick actions below the counter
+            _InlineAuthPanel(onSignedIn: () async {
+              // After inline sign-in/up, route by role
+              final data = await AuthService.getUserData();
+              final role = (data != null ? (data['role'] as String? ?? 'student') : 'student');
+              if (!mounted) return;
+              RoleRouter.goToRoleHome(context, role);
+            }),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -174,6 +191,63 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class _InlineAuthPanel extends StatelessWidget {
+  final VoidCallback onSignedIn;
+  const _InlineAuthPanel({required this.onSignedIn});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => onboarding.LoginScreen(
+                      onLogin: (email, password) async {
+                        try {
+                          await AuthService.signInWithEmailAndPassword(email: email.trim(), password: password);
+                          await AuthService.updateLastLogin();
+                          onSignedIn();
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Login failed: ${e is Exception ? e.toString() : e}')),
+                          );
+                        }
+                      },
+                      onBack: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Sign In'),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => onboarding.SignUpScreen(
+                      onClose: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Sign Up'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

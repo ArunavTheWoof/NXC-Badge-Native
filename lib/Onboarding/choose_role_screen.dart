@@ -178,6 +178,12 @@ class ChooseRoleScreen extends StatelessWidget {
   Widget _buildRoleCard(BuildContext context, String roleName, String assetPath, Color backgroundColor, {bool isSelected = false}) {
     return GestureDetector(
       onTap: () {
+        // If a selection handler is provided (e.g., during signup/login), delegate to it.
+        // Otherwise, preserve existing direct navigation behavior for dev/demo flows.
+        if (onRoleSelected != null) {
+          onRoleSelected!.call(roleName);
+          return;
+        }
         if (roleName == 'Admin') {
           Navigator.push(
             context,
@@ -207,9 +213,6 @@ class ChooseRoleScreen extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => const GatekeeperMainScreen()),
           );
-        }
-        else {
-          onRoleSelected?.call(roleName);
         }
       },
       child: Container(

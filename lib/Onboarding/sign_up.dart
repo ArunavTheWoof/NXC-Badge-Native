@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:test_app1/Onboarding/choose_role_screen.dart';
+import 'package:test_app1/services/auth_service.dart';
+import 'package:test_app1/services/role_router.dart';
+import 'package:test_app1/services/firebase_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   final VoidCallback? onClose;
@@ -43,15 +47,60 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _handleSignUp() {
-    if (_formKey.currentState!.validate() && _agreeToTerms) {
-      widget.onSignUp?.call(
+    if (!(_formKey.currentState!.validate() && _agreeToTerms)) return;
+
+    // If external handler is supplied, preserve it
+    if (widget.onSignUp != null) {
+      widget.onSignUp!.call(
         _nameController.text,
         _organizationController.text,
         _emailController.text,
         _passwordController.text,
         _confirmPasswordController.text,
       );
+      return;
     }
+
+    // Embedded flow: ask for role, then create account and route
+    Future<void> proceed(String role) async {
+      try {
+        final cred = await AuthService.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          displayName: _nameController.text.trim(),
+          role: role.trim().toLowerCase(),
+        );
+
+        // Add optional organization to user doc if provided
+        if (cred?.user != null && _organizationController.text.trim().isNotEmpty) {
+          await FirebaseService.firestore
+              .collection('users')
+              .doc(cred!.user!.uid)
+              .update({'organization': _organizationController.text.trim()});
+        }
+
+        if (!mounted) return;
+        RoleRouter.goToRoleHome(context, role);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign up failed: ${e is Exception ? e.toString() : e}')),
+        );
+      }
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ChooseRoleScreen(
+          onBack: () => Navigator.of(context).pop(),
+          onRoleSelected: (role) async {
+            // Immediately proceed once a role is tapped
+            Navigator.of(context).pop();
+            await proceed(role);
+          },
+        ),
+      ),
+    );
   }
 
   @override

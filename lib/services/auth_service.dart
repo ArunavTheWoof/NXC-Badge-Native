@@ -80,6 +80,7 @@ class AuthService {
     required String email,
     required String displayName,
     required String role,
+    String? organization,
   }) async {
     try {
       await FirebaseService.firestore.collection('users').doc(uid).set({
@@ -87,6 +88,7 @@ class AuthService {
         'email': email,
         'displayName': displayName,
         'role': role,
+        if (organization != null && organization.isNotEmpty) 'organization': organization,
         'createdAt': FieldValue.serverTimestamp(),
         'lastLoginAt': FieldValue.serverTimestamp(),
         'isActive': true,
