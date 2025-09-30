@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:test_app1/services/classes_service.dart';
+import 'package:test_app1/services/firebase_service.dart';
+import 'package:test_app1/services/log_service.dart';
 
 class CreateNewClassScreen extends StatefulWidget {
   const CreateNewClassScreen({super.key});
@@ -273,11 +276,9 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
           const SizedBox(width: 20),
           Expanded(
             child: ElevatedButton(
-              onPressed: () {
-                // TODO: Implement save class logic
-              },
+              onPressed: _onSaveClass,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEA4335), // Exact red from image
+                backgroundColor: const Color(0xFFEA4335),
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -288,6 +289,41 @@ class _CreateNewClassScreenState extends State<CreateNewClassScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _onSaveClass() async {
+    final name = _classNameController.text.trim();
+    if (name.isEmpty) {
+      _showSnack('Class name required');
+      return;
+    }
+    if (_subjects.isEmpty) {
+      _showSnack('Add at least one subject');
+      return;
+    }
+    final adminId = FirebaseService.currentUserId;
+    if (adminId == null) {
+      _showSnack('Not signed in');
+      return;
+    }
+    try {
+      final classId = await ClassesService.createClass(
+        name: name,
+        subjects: _subjects,
+        createdByAdminId: adminId,
+      );
+      _showSnack('Class created: $classId');
+      if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      LogService.error('Failed to create class', error: e);
+      _showSnack('Error creating class');
+    }
+  }
+
+  void _showSnack(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), duration: const Duration(seconds: 2)),
     );
   }
 }

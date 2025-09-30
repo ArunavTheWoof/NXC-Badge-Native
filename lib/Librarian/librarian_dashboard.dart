@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:test_app1/Librarian/bottom_nav_bar_librarian.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:test_app1/services/library_service.dart';
+import 'package:test_app1/services/firebase_service.dart';
+import 'package:test_app1/services/log_service.dart';
 import 'dart:math' as math;
 import 'package:test_app1/nfc_scan.dart';
 
@@ -20,6 +24,7 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
 
   final bool _isNfcScanning = false;
   String _selectedTab = 'Issue Book';
+  String? _currentUserId;
 
   @override
   void initState() {
@@ -37,6 +42,7 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
     _nfcPulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
       CurvedAnimation(parent: _nfcAnimationController, curve: Curves.easeInOut),
     );
+    _currentUserId = FirebaseService.currentUserId;
   }
 
   @override
@@ -92,6 +98,8 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
                   _buildTab('Issue Book', _selectedTab == 'Issue Book'),
                   const SizedBox(width: 32),
                   _buildTab('Return Book', _selectedTab == 'Return Book'),
+                  const SizedBox(width: 32),
+                  _buildTab('Active Issues', _selectedTab == 'Active Issues'),
                 ],
               ),
             ),
@@ -102,9 +110,18 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20.0),
-                child: _selectedTab == 'Issue Book'
-                    ? _buildIssueBookContent(context)
-                    : _buildReturnBookContent(),
+                child: () {
+                  switch (_selectedTab) {
+                    case 'Issue Book':
+                      return _buildIssueBookContent(context);
+                    case 'Return Book':
+                      return _buildReturnBookContent();
+                    case 'Active Issues':
+                      return _buildActiveIssues();
+                    default:
+                      return const SizedBox.shrink();
+                  }
+                }(),
               ),
             ),
 
@@ -238,6 +255,115 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
       child: Text(
         'Return Book Content',
         style: TextStyle(fontSize: 18),
+      ),
+    );
+  }
+
+  Widget _buildActiveIssues() {
+    final uid = _currentUserId;
+    if (uid == null) {
+      return const Center(child: Text('Not signed in'));
+    }
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: LibraryService.activeIssuesStream(uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.only(top: 32),
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          );
+        }
+        final issues = snapshot.data ?? [];
+        if (issues.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.only(top: 32),
+            child: Center(child: Text('No active issues.')),
+          );
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Active Issues',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            for (final issue in issues) _buildIssueRow(issue),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildIssueRow(Map<String, dynamic> issue) {
+    final issueId = (issue['issueId'] ?? '') as String;
+    final bookTitle = (issue['bookTitle'] ?? 'Unknown') as String;
+    final dueTs = issue['dueDate'];
+    DateTime? due;
+    if (dueTs is Timestamp) due = dueTs.toDate();
+    final overdue = due != null && due.isBefore(DateTime.now());
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  bookTitle,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+                if (due != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Due: ${due.toLocal().toString().split(' ').first}' + (overdue ? ' (Overdue)' : ''),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: overdue ? Colors.red : Colors.black54,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 36,
+            child: ElevatedButton(
+              onPressed: issueId.isEmpty ? null : () async {
+                try {
+                  await LibraryService.markReturned(issueId);
+                } catch (e) {
+                  LogService.warning('Failed to mark returned: $e');
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF20B2AA),
+                foregroundColor: Colors.black,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: const Text(
+                'Return',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

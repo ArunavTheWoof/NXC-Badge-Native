@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app1/services/firebase_service.dart';
 import 'package:test_app1/services/log_service.dart';
+import 'package:test_app1/services/attendance_service.dart';
 
 /// Authentication service for handling user authentication
 class AuthService {
@@ -22,6 +23,9 @@ class AuthService {
         'method': 'email_password',
         'user_id': userCredential.user?.uid ?? '',
       });
+
+      // Dev: seed exact sample attendance for showcase user
+      await _maybeSeedSampleAttendance(userCredential.user);
       
       return userCredential;
     } on FirebaseAuthException catch (e) {
@@ -39,6 +43,9 @@ class AuthService {
     required String password,
     required String displayName,
     required String role,
+    String? collegeId,
+    List<String>? classesEnrolled,
+    String? avatarUrl,
   }) async {
     try {
       UserCredential userCredential = await FirebaseService.auth.createUserWithEmailAndPassword(
@@ -55,7 +62,13 @@ class AuthService {
         email: email,
         displayName: displayName,
         role: role,
+        collegeId: collegeId,
+        classesEnrolled: classesEnrolled ?? const [],
+        avatarUrl: avatarUrl,
       );
+
+      // Initialize attendance aggregate doc
+      await AttendanceService.ensureUserAggregate(userCredential.user!.uid);
       
       // Log analytics event
       await FirebaseService.logEvent('sign_up', {
@@ -63,6 +76,9 @@ class AuthService {
         'user_id': userCredential.user?.uid ?? '',
         'role': role,
       });
+
+      // Dev: also seed for showcase user if matching ID/email
+      await _maybeSeedSampleAttendance(userCredential.user);
       
       return userCredential;
     } on FirebaseAuthException catch (e) {
@@ -81,18 +97,29 @@ class AuthService {
     required String displayName,
     required String role,
     String? organization,
+    String? collegeId,
+    List<String>? classesEnrolled,
+    String? avatarUrl,
   }) async {
     try {
       await FirebaseService.firestore.collection('users').doc(uid).set({
         'uid': uid,
         'email': email,
+        'name': displayName,
+        // Backward compatibility fields
         'displayName': displayName,
-        'role': role,
+        'role': role, // legacy single role field
+        'roles': [role],
+        'currentRole': role,
         if (organization != null && organization.isNotEmpty) 'organization': organization,
+        if (collegeId != null) 'collegeId': collegeId,
+        'classesEnrolled': classesEnrolled ?? const [],
+        if (avatarUrl != null) 'avatarUrl': avatarUrl,
         'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
         'lastLoginAt': FieldValue.serverTimestamp(),
         'isActive': true,
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       LogService.error('Error creating user document', error: e);
       rethrow;
@@ -108,6 +135,7 @@ class AuthService {
             .doc(FirebaseService.currentUserId)
             .update({
           'lastLoginAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
         });
       }
     } catch (e) {
@@ -185,6 +213,38 @@ class AuthService {
     } catch (e) {
       LogService.error('Delete account error', error: e);
       rethrow;
+    }
+  }
+
+  /// Development-only seeding for a showcase account.
+  static const _showcaseUserId = 'DZ1LPLHvDFUwiJBmJwxI72ohyjt1';
+  static const _showcaseEmail = 'legendary.squad.0216@gmail.com';
+
+  static Future<void> _maybeSeedSampleAttendance(User? user) async {
+    if (user == null) return;
+    try {
+      if (user.uid != _showcaseUserId && user.email != _showcaseEmail) return;
+      final agg = await AttendanceService.fetchUserAggregate(user.uid);
+      // If already have at least 50 total sessions across math & science, assume seeded
+      final math = agg['MATH101'] as Map<String, dynamic>?;
+      final sci = agg['SCI101'] as Map<String, dynamic>?;
+      final mathTotal = (math?['totalCount'] as num?)?.toInt() ?? 0;
+      final sciTotal = (sci?['totalCount'] as num?)?.toInt() ?? 0;
+      if (mathTotal >= 100 && sciTotal >= 100) {
+        // Mirror anyway to keep 'attendance' doc updated
+        await AttendanceService.mirrorUserAggregate(user.uid, agg);
+        return;
+      }
+      await AttendanceService.seedExactPercentages(
+        userId: user.uid,
+        classPercentTargets: {
+          'MATH101': 69,
+          'SCI101': 70,
+        },
+        totalTarget: 100,
+      );
+    } catch (e) {
+      LogService.warning('Sample attendance seeding skipped: $e');
     }
   }
 }
