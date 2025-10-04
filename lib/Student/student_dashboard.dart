@@ -58,7 +58,10 @@ class _StudentDashboardState extends State<StudentDashboard> {
     // Fallback: if aggregate empty, attempt mirror collection
     if (attendanceMap.isEmpty) {
       try {
-        final mirror = await FirebaseService.firestore.collection('attendance').doc(userId).get();
+          final mirror = await FirebaseService.firestore
+              .collection(AttendanceService.mirrorCollection)
+              .doc(userId)
+              .get();
         if (mirror.exists) {
           final data = mirror.data() ?? {};
           attendanceMap = (data['classes'] as Map<String, dynamic>? ?? {});

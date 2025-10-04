@@ -153,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // After inline sign-in/up, route by role
               final data = await AuthService.getUserData();
               final role = (data != null ? (data['role'] as String? ?? 'student') : 'student');
-              if (!mounted) return;
+              if (!context.mounted) return;
               RoleRouter.goToRoleHome(context, role);
             }),
             ElevatedButton(
@@ -201,6 +201,7 @@ class _InlineAuthPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final messenger = ScaffoldMessenger.of(context);
     return Column(
       children: [
         const SizedBox(height: 8),
@@ -219,7 +220,7 @@ class _InlineAuthPanel extends StatelessWidget {
                           await AuthService.updateLastLogin();
                           onSignedIn();
                         } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          messenger.showSnackBar(
                             SnackBar(content: Text('Login failed: ${e is Exception ? e.toString() : e}')),
                           );
                         }

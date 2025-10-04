@@ -1,0 +1,129 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function hasRole(role) {
+      return isAuth() && request.auth.token[role] == true;
+    }
+
+    function hasAnyRole(roles) {
+      return roles.any((role) => hasRole(role));
+    }
+
+    function isSelf(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return hasRole('isAdmin');
+    }
+
+    function validLibraryStatus() {
+      return !('status' in request.resource.data) ||
+        (
+          request.resource.data.status is string &&
+          request.resource.data.status in ['issued', 'returned']
+        );
+    }
+
+    function validAttendanceStatus() {
+      return !('status' in request.resource.data) ||
+        (
+          request.resource.data.status is string &&
+          request.resource.data.status in ['present', 'absent', 'late']
+        );
+    }
+
+    function validDocumentStatus() {
+      return !('status' in request.resource.data) ||
+        (
+          request.resource.data.status is string &&
+          request.resource.data.status in ['issued', 'revoked', 'archived', 'draft']
+        );
+    }
+
+    function validOnboardingStatus() {
+      return !('onboardingStatus' in request.resource.data) ||
+        (
+          request.resource.data.onboardingStatus is string &&
+          request.resource.data.onboardingStatus in ['not_started', 'in_progress', 'completed', 'skipped']
+        );
+    }
+
+    /// Users --------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if isSelf(userId) || isAdmin();
+      allow create: if (isAdmin() || (isAuth() && request.auth.uid == userId)) && validOnboardingStatus();
+      allow update: if (
+          (
+            isSelf(userId) &&
+            !('roles' in request.resource.data) &&
+            !('currentRole' in request.resource.data)
+          ) || isAdmin()
+        ) && validOnboardingStatus();
+      allow delete: if false;
+    }
+
+    /// Classes ------------------------------------------------------------
+    match /classes/{classId} {
+      allow create, update, delete: if isAdmin();
+      allow read: if isAuth();
+    }
+
+    /// Attendance Sessions ------------------------------------------------
+    match /attendanceSessions/{sessionId} {
+      allow create: if hasAnyRole(['isAdmin', 'isTeacher', 'isGatekeeper']);
+      allow read: if hasAnyRole(['isAdmin', 'isTeacher', 'isGatekeeper']);
+      allow update, delete: if false;
+    }
+
+    /// Attendance Records (raw events) -----------------------------------
+    match /attendanceRecords/{recordId} {
+      allow create: if hasAnyRole(['isAdmin', 'isTeacher', 'isGatekeeper']);
+      allow read: if hasAnyRole(['isAdmin', 'isTeacher']);
+      allow update, delete: if false;
+    }
+
+    /// Attendance Aggregate (per user) -----------------------------------
+    match /attendanceAgg/{userId} {
+      allow read: if isSelf(userId) || hasAnyRole(['isAdmin', 'isTeacher']);
+      allow write: if hasAnyRole(['isAdmin', 'isTeacher', 'isGatekeeper']);
+    }
+
+    /// Attendance Mirror --------------------------------------------------
+    match /attendanceMirrors/{userId} {
+      allow read: if isSelf(userId) || hasAnyRole(['isAdmin', 'isTeacher']);
+      allow write: if isSelf(userId) || hasAnyRole(['isAdmin', 'isTeacher']);
+    }
+
+    /// Canonical Attendance projection -----------------------------------
+    match /attendance/{attendanceId} {
+      allow read: if hasAnyRole(['isAdmin', 'isTeacher']);
+      allow create: if hasAnyRole(['isAdmin', 'isTeacher', 'isGatekeeper']) && validAttendanceStatus();
+      allow update, delete: if false;
+    }
+
+    /// Library transactions ----------------------------------------------
+    match /library/{transactionId} {
+      allow read: if hasAnyRole(['isAdmin', 'isLibrarian']) || (isAuth() && resource.data.userId == request.auth.uid);
+      allow create, update: if hasAnyRole(['isAdmin', 'isLibrarian']) && validLibraryStatus();
+      allow delete: if false;
+    }
+
+    /// Documents ---------------------------------------------------------
+    match /documents/{docId} {
+      allow read: if hasAnyRole(['isAdmin']) || (isAuth() && resource.data.userId == request.auth.uid);
+      allow create, update: if isAdmin() && validDocumentStatus();
+      allow delete: if isAdmin();
+    }
+
+    /// Colleges ----------------------------------------------------------
+    match /colleges/{collegeId} {
+      allow read: if isAuth();
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

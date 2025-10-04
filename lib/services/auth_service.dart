@@ -231,7 +231,7 @@ class AuthService {
       final mathTotal = (math?['totalCount'] as num?)?.toInt() ?? 0;
       final sciTotal = (sci?['totalCount'] as num?)?.toInt() ?? 0;
       if (mathTotal >= 100 && sciTotal >= 100) {
-        // Mirror anyway to keep 'attendance' doc updated
+  // Mirror anyway to keep attendance mirror doc updated
         await AttendanceService.mirrorUserAggregate(user.uid, agg);
         return;
       }

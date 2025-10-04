@@ -1,42 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app1/services/firebase_service.dart';
 import 'package:test_app1/services/log_service.dart';
+import 'package:test_app1/services/supabase_sync_service.dart';
 
 /// Service layer for librarian-related book issue workflows.
 /// Collection structure:
-/// /libraryIssues/{issueId}
-///   - issueId
+/// /library/{transactionId}
+///   - transactionId
 ///   - userId
+///   - bookId
 ///   - bookTitle
-///   - issueDate (Timestamp)
-///   - dueDate (Timestamp)
-///   - returnDate (Timestamp?)
-///   - status ("issued" | "returned")
-///   - createdAt / updatedAt
+///   - issuedAt (ISO string)
+///   - returnedAt (ISO string or null)
+///   - [status, dueDate, librarianId, etc.]
 class LibraryService {
-  static const String issuesCollection = 'libraryIssues';
+  static const String issuesCollection = 'library';
   static FirebaseFirestore get _db => FirebaseService.firestore;
 
   /// Create a new issue record. Returns issueId.
   static Future<String> createIssue({
     required String userId,
+    required String bookId,
     required String bookTitle,
     required DateTime issueDate,
     required DateTime dueDate,
+    String? librarianId,
   }) async {
     try {
-      final ref = _db.collection(issuesCollection).doc();
-      await ref.set({
-        'issueId': ref.id,
-        'userId': userId,
-        'bookTitle': bookTitle,
-        'issueDate': Timestamp.fromDate(issueDate.toUtc()),
-        'dueDate': Timestamp.fromDate(dueDate.toUtc()),
-        'status': 'issued',
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      return ref.id;
+      final recordId = await SupabaseSyncService.recordLibraryTransaction(
+        LibrarySyncRecord(
+          userId: userId,
+          bookId: bookId,
+          bookTitle: bookTitle,
+          issuedAt: issueDate.toUtc(),
+          extra: {
+            'status': 'issued',
+            'dueDate': dueDate.toUtc().toIso8601String(),
+            'createdAt': issueDate.toUtc().toIso8601String(),
+            if (librarianId != null) 'librarianId': librarianId,
+          },
+        ),
+      );
+      return recordId;
     } catch (e) {
       LogService.error('Error creating library issue', error: e);
       rethrow;
@@ -46,12 +51,12 @@ class LibraryService {
   /// Mark an issue as returned (idempotent).
   static Future<void> markReturned(String issueId, {DateTime? returnDate}) async {
     try {
-      final ref = _db.collection(issuesCollection).doc(issueId);
-      await ref.update({
+      final returnedAt = (returnDate ?? DateTime.now()).toUtc();
+      await _db.collection(issuesCollection).doc(issueId).set({
+        'returnedAt': returnedAt.toIso8601String(),
         'status': 'returned',
-        'returnDate': Timestamp.fromDate((returnDate ?? DateTime.now()).toUtc()),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+        'updatedAt': returnedAt.toIso8601String(),
+      }, SetOptions(merge: true));
     } catch (e) {
       LogService.error('Error marking issue returned', error: e);
       rethrow;
@@ -65,9 +70,9 @@ class LibraryService {
           .collection(issuesCollection)
           .where('userId', isEqualTo: userId)
           .where('status', isEqualTo: 'issued')
-          .orderBy('issueDate', descending: true)
+          .orderBy('issuedAt', descending: true)
           .get();
-      return snap.docs.map((d) => d.data()).toList();
+      return snap.docs.map(_mapIssueDoc).toList();
     } catch (e) {
       LogService.error('Error fetching active issues', error: e);
       return [];
@@ -80,10 +85,10 @@ class LibraryService {
       final snap = await _db
           .collection(issuesCollection)
           .where('userId', isEqualTo: userId)
-          .orderBy('issueDate', descending: true)
+          .orderBy('issuedAt', descending: true)
           .limit(200)
           .get();
-      return snap.docs.map((d) => d.data()).toList();
+      return snap.docs.map(_mapIssueDoc).toList();
     } catch (e) {
       LogService.error('Error fetching issue history', error: e);
       return [];
@@ -96,8 +101,16 @@ class LibraryService {
         .collection(issuesCollection)
         .where('userId', isEqualTo: userId)
         .where('status', isEqualTo: 'issued')
-        .orderBy('issueDate', descending: true)
+        .orderBy('issuedAt', descending: true)
         .snapshots()
-        .map((snap) => snap.docs.map((d) => d.data()).toList());
+        .map((snap) => snap.docs.map(_mapIssueDoc).toList());
+  }
+
+  static Map<String, dynamic> _mapIssueDoc(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
+    return {
+      ...data,
+      'issueId': doc.id,
+    };
   }
 }

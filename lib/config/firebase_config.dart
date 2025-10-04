@@ -5,6 +5,7 @@ class FirebaseConfig {
   static const String classesCollection = 'classes';
   static const String studentsCollection = 'students';
   static const String attendanceCollection = 'attendance';
+  static const String attendanceMirrorCollection = 'attendanceMirrors';
   static const String eventsCollection = 'events';
   static const String booksCollection = 'books';
   static const String borrowedBooksCollection = 'borrowed_books';

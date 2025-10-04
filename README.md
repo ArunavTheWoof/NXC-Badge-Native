@@ -117,3 +117,7 @@ Institutions save hours daily on attendance & verification
 Events run smoother with automated check-ins
 
 Investors gain entry into a high-demand EdTech & ID Management market with a scalable product
+
+📚 Documentation
+- [Supabase ↔ Firebase Sync Guide](SUPABASE_INTEGRATION.md)
+- [Service & UI Overview](docs/services_overview.md)

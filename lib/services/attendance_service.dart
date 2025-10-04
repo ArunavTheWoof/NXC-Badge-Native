@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app1/services/firebase_service.dart';
 import 'package:test_app1/services/log_service.dart';
+import 'package:test_app1/services/supabase_sync_service.dart';
 
 class AttendanceService {
   static const String recordsCollection = 'attendanceRecords';
   static const String aggCollection = 'attendanceAgg';
   static const String sessionsCollection = 'attendanceSessions';
   // Mirror collection (per-user doc) for simplified client reads if needed
-  static const String mirrorCollection = 'attendance';
+  static const String mirrorCollection = 'attendanceMirrors';
 
   static FirebaseFirestore get _db => FirebaseService.firestore;
 
@@ -32,6 +33,9 @@ class AttendanceService {
     required String source,
     required String classId,
     bool present = true,
+    String? collegeId,
+    DateTime? occurredAt,
+    AttendanceStatus? statusOverride,
   }) async {
     try {
       final batch = _db.batch();
@@ -54,6 +58,29 @@ class AttendanceService {
       }, SetOptions(merge: true));
 
       await batch.commit();
+
+    final status = statusOverride ?? (present ? AttendanceStatus.present : AttendanceStatus.absent);
+    final eventTime = occurredAt ?? DateTime.now().toUtc();
+    final college = collegeId ?? await _resolveCollegeId(userId) ?? 'unknown';
+
+      try {
+        await SupabaseSyncService.recordAttendance(
+          AttendanceSyncRecord(
+            attendanceId: recordRef.id,
+            userId: userId,
+            collegeId: college,
+            status: status,
+            timestamp: eventTime,
+            extra: {
+              'classId': classId,
+              'sessionId': sessionId,
+              'source': source,
+            },
+          ),
+        );
+      } catch (e, stack) {
+        LogService.error('Failed to mirror attendance record into /attendance', error: e, stackTrace: stack);
+      }
     } catch (e) {
       LogService.error('Error recording attendance', error: e);
       rethrow;
@@ -114,16 +141,16 @@ class AttendanceService {
     required String userId,
     required String email,
     required Map<String, dynamic> existingClasses,
-    List<_SeedSubject>? subjectsOverride,
+    List<SeedSubject>? subjectsOverride,
   }) async {
     try {
       // Define default seed subjects
       final subjects = subjectsOverride ?? const [
-        _SeedSubject('MATH101'),
-        _SeedSubject('SCI101'),
-        _SeedSubject('HIS101'),
-        _SeedSubject('ENG101'),
-        _SeedSubject('ART101'),
+        SeedSubject('MATH101'),
+        SeedSubject('SCI101'),
+        SeedSubject('HIS101'),
+        SeedSubject('ENG101'),
+        SeedSubject('ART101'),
       ];
 
       await ensureUserAggregate(userId);
@@ -144,13 +171,15 @@ class AttendanceService {
             startedBy: userId,
             classOrEventId: subj.classId,
           );
-          final present = ( ( (stats?['presentCount'] as num?)?.toInt() ?? 0) + i ) < presentTarget;
-            await recordAttendance(
-              sessionId: sessionId,
-              userId: userId,
-              source: 'DEV_SEED',
-              classId: subj.classId,
-              present: present,
+          final present = (((stats?['presentCount'] as num?)?.toInt() ?? 0) + i) < presentTarget;
+          await recordAttendance(
+            sessionId: sessionId,
+            userId: userId,
+            source: 'DEV_SEED',
+            classId: subj.classId,
+            present: present,
+            collegeId: 'demo-college',
+            occurredAt: DateTime.now().toUtc(),
           );
         }
       }
@@ -200,6 +229,8 @@ class AttendanceService {
             source: 'DEV_SEED_EXACT',
             classId: classId,
             present: shouldBePresent,
+            collegeId: 'demo-college',
+            occurredAt: DateTime.now().toUtc(),
           );
           if (shouldBePresent) presentAdded++;
         }
@@ -238,13 +269,15 @@ class AttendanceService {
             startedBy: userId,
             classOrEventId: classId,
           );
-            await recordAttendance(
-              sessionId: sessionId,
-              userId: userId,
-              source: 'DEV_QUICK_SEED',
-              classId: classId,
-              present: i < presentTarget,
-            );
+          await recordAttendance(
+            sessionId: sessionId,
+            userId: userId,
+            source: 'DEV_QUICK_SEED',
+            classId: classId,
+            present: i < presentTarget,
+            collegeId: 'demo-college',
+            occurredAt: DateTime.now().toUtc(),
+          );
         }
       }
       final updated = await fetchUserAggregate(userId);
@@ -253,9 +286,24 @@ class AttendanceService {
       LogService.error('Error in quick demo seed', error: e);
     }
   }
+
+  static Future<String?> _resolveCollegeId(String userId) async {
+    try {
+      final doc = await _db.collection('users').doc(userId).get();
+      if (!doc.exists) return null;
+      final data = doc.data();
+      final value = data?['collegeId'];
+      if (value is String && value.isNotEmpty) {
+        return value;
+      }
+    } catch (e) {
+      LogService.debug('Unable to resolve collegeId for $userId: $e');
+    }
+    return null;
+  }
 }
 
-class _SeedSubject {
+class SeedSubject {
   final String classId;
-  const _SeedSubject(this.classId);
+  const SeedSubject(this.classId);
 }

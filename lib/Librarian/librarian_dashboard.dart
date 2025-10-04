@@ -304,7 +304,13 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
     final bookTitle = (issue['bookTitle'] ?? 'Unknown') as String;
     final dueTs = issue['dueDate'];
     DateTime? due;
-    if (dueTs is Timestamp) due = dueTs.toDate();
+    if (dueTs is Timestamp) {
+      due = dueTs.toDate().toLocal();
+    } else if (dueTs is String && dueTs.isNotEmpty) {
+      try {
+        due = DateTime.parse(dueTs).toLocal();
+      } catch (_) {}
+    }
     final overdue = due != null && due.isBefore(DateTime.now());
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -330,7 +336,7 @@ class _LibrarianDashboardState extends State<LibrarianDashboard>
                 if (due != null) ...[
                   const SizedBox(height: 4),
                   Text(
-                    'Due: ${due.toLocal().toString().split(' ').first}' + (overdue ? ' (Overdue)' : ''),
+                    'Due: ${due.toString().split(' ').first}${overdue ? ' (Overdue)' : ''}',
                     style: TextStyle(
                       fontSize: 13,
                       color: overdue ? Colors.red : Colors.black54,
